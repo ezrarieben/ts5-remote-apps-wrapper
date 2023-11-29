@@ -93,7 +93,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+#dist # For this project we are using the dist/ folder
 
 # Gatsby files
 .cache/

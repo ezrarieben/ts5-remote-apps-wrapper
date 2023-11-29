@@ -1,13 +1,66 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>TeamSpeak 5 Remote Apps Example</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <script src='../dist/ts5-remote-apps-wrapper.min.js'></script>
-</head>
-<body>
-    
-</body>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>TeamSpeak 5 Remote Apps Example</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="../dist/ts5-remote-apps-wrapper.min.js"></script>
+    </head>
+    <body>
+        <!-- getCookie() and setCookie() functions -->
+        <script>
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            }
+
+            function setCookie(name, value, days) {
+                var expires = "";
+                if (days) {
+                    var date = new Date();
+                    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+                    expires = "; expires=" + date.toUTCString();
+                }
+                document.cookie =
+                    name + "=" + (value || "") + expires + "; path=/";
+            }
+        </script>
+
+        <!-- TSApiWrapper functionality -->
+        <script>
+            var apiKey = getCookie("apiKey") ?? "";
+
+            // Initial connection to setup API
+            var api = new TSRemoteAppWrapper.TSApiWrapper({
+                api: {
+                    key: apiKey,
+                    tsEventDebug: true
+                },
+                app: {
+                    identifier: 'example-app',
+                    version: "0.0.1",
+                    name: 'Example app',
+                    description: 'Example app for ts5-remote-apps-wrapper'
+                }
+            });
+            
+            // Once API is connected store generated API key for future connections
+            api.on("apiReady", (data) => {
+                if (apiKey === "") {
+                    console.log("Connected for the first time. Store API key: " + data.payload.apiKey);
+                    apiKey = data.payload.apiKey;
+                    setCookie("apiKey", apiKey, 365);
+                } else {
+                    console.log("Connected using existing API key: " + apiKey);
+                }
+            });
+
+            // Show errors in console
+            api.on("apiError", (data) => {
+                console.log(data.exception.message);
+            });
+        </script>
+    </body>
 </html>

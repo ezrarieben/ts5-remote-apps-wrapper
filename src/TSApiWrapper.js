@@ -27,22 +27,22 @@ export class TSApiWrapper {
 
         this.#connection = new TSApiConnection(this.#config);
 
-        this.#connection.on('error', (event) => {
-            this.#emit('apiError', event);
+        this.#connection.on('error', (params) => {
+            this.#emit('apiError', params);
         });
 
-        this.#connection.on('close', (event) => {
-            this.#emit('apiConnectionClosed', event);
+        this.#connection.on('close', (params) => {
+            this.#emit('apiConnectionClosed', params);
         });
 
-        this.#connection.on('open', (event) => {
-            this.#emit('apiConnectionOpen', event);
+        this.#connection.on('open', (params) => {
+            this.#emit('apiConnectionOpen', params);
         });
 
-        this.#connection.on('message', (event) => {
-            this.#emit('apiIncomingMessage', event);
+        this.#connection.on('message', (params) => {
+            this.#emit('apiIncomingMessage', params);
 
-            var message = JSON.parse(event.data);
+            var message = JSON.parse(params.data);
 
             // If message from TS API has a type we'll execute the type's message handler
             if (typeof message.type !== "undefined") {
@@ -80,6 +80,7 @@ export class TSApiWrapper {
 
         if (this.#config.get('api').tsEventDebug) {
             console.log("Event received: " + eventName);
+            console.log(message);
         }
 
         this.#emit(eventName, message);

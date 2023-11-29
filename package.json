@@ -23,5 +23,12 @@
     "expose-loader": "^4.1.0",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
+  },
+  "bugs": {
+    "url": "https://github.com/ezrarieben/ts5-remote-apps-wrapper/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ezrarieben/ts5-remote-apps-wrapper"
   }
 }
