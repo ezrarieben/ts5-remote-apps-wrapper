@@ -8,6 +8,8 @@ export class TSApiConnection {
     #events = new Map(); // Used to create custom event handler: https://javascript.plainenglish.io/building-a-simple-event-emitter-in-javascript-f82f68c214ad
     #socketUrl = null;
     #isOpen = false;
+    #wasClosed = false;
+    #wasClosedOnPurpose = false;
     #sendQueue = [];
     #ws = null;
 
@@ -23,41 +25,19 @@ export class TSApiConnection {
 
         this.#socketUrl = "ws://" + this.config.get('api').host + ":" + parseInt(this.config.get('api').port) + "/";
 
-        this.#ws = new WebSocket(this.#socketUrl);
-
-        this.#ws.onopen = (event) => {
-            this.#isOpen = true;
-
-            // Send all messages to API in queue
-            var i;
-            for(i = 0; i < this.#sendQueue.length; i++) {
-                this.send(this.#sendQueue[i]);
-            }
-            this.#sendQueue.splice(i); // Splice array using last iterated index to reset queue
-
-            this.emit('open', event);
-        }
-
-        this.#ws.onerror = (event) => {
-            this.emit('error', event);
-            this.#onerror(event);
-        };
-
-        this.#ws.onclose = (event) => {
-            this.#isOpen = false;
-
-            this.emit('close', event);
-        }
-
-        this.#ws.onmessage = (event) => {
-            this.emit('message', event);
-        }
+        this.connect();
     }
 
     send(data) {
         if (this.#isOpen !== true) {
             // WebSocket is not ready to receive data yet so we'll add the data to the send queue
             this.#sendQueue.push(data);
+
+            // If connection to WebSocket was not closed on purpose we'll try to reconnect
+            if (this.#wasClosed && this.#wasClosedOnPurpose !== true) {
+                this.connect();
+            }
+
             return;
         }
 
@@ -78,11 +58,52 @@ export class TSApiConnection {
         }
     }
 
-    emit(event, ...data) {
+    #emit(event, ...data) {
         if (this.#events.has(event)) {
             this.#events.get(event).forEach(callback => {
                 setTimeout(() => callback(...data), 0);
             });
+        }
+    }
+
+    disconnect() {
+        if (this.#isOpen) {
+            this.#ws.close();
+            this.#wasClosedOnPurpose = true;
+        }
+    }
+
+    connect() {
+        this.#ws = new WebSocket(this.#socketUrl);
+
+        this.#ws.onopen = (event) => {
+            this.#isOpen = true;
+
+            // Send all messages to API in queue
+            var i;
+            for (i = 0; i < this.#sendQueue.length; i++) {
+                this.send(this.#sendQueue[i]);
+            }
+            this.#sendQueue.splice(i); // Splice array using last iterated index to reset queue
+
+            this.#emit('open', event);
+        }
+
+        this.#ws.onerror = (event) => {
+            // No need to set #wasClosed here because event handler "onclose" is also called "onerror"
+            this.#emit('error', event);
+            this.#onerror(event);
+        };
+
+        this.#ws.onclose = (event) => {
+            this.#isOpen = false;
+            this.#wasClosed = true;
+
+            this.#emit('close', event);
+        }
+
+        this.#ws.onmessage = (event) => {
+            this.#emit('message', event);
         }
     }
 

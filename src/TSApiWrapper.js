@@ -42,6 +42,7 @@ export class TSApiWrapper {
 
         this.api.on('message', (event) => {
             var message = JSON.parse(event.data);
+            console.log(message);
             if(message.type === "auth") {
                 this.isAuthenticated = true;
                 console.log(message);
