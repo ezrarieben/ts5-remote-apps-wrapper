@@ -4,6 +4,7 @@ export class TSApiConfig {
             host: 'localhost',
             port: 5899,
             key: '',
+            tsEventDebug: false,
         },
         app: {
             name: "TS Remote Apps Wrapper",
@@ -25,7 +26,21 @@ export class TSApiConfig {
      * @return  {[Mixed]}       Config JSON object. "null" if config object is not set.
      */
     get(key) {
+        if (typeof key === "undefined") {
+            return this.#config;
+        }
         return this.#config[key];
+    }
+
+    /**
+     * Merge existing config with new values
+     *
+     * @param   {[Object]}  config  JSON Object with config
+     *
+     * @return  {[void]}
+     */
+    set(config = {}) {
+        this.#config = this.#mergeConfig(this.#config, config);
     }
 
     /**
