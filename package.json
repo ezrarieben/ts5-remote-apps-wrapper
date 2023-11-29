@@ -1,0 +1,26 @@
+{
+  "name": "ts5-remote-apps-wrapper",
+  "version": "1.0.0",
+  "description": "An API wrapper written in JavaScript for TeamSpeak 5's remote apps WebSocket feature",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "keywords": [
+    "TeamSpeak",
+    "TeamSpeak5",
+    "teamspeak5",
+    "Remote",
+    "ts5",
+    "api",
+    "WebSocket"
+  ],
+  "author": "Ezra Rieben",
+  "license": "MIT",
+  "devDependencies": {
+    "expose-loader": "^4.1.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
