@@ -9,7 +9,8 @@ A front end API wrapper written in JavaScript for TeamSpeak 5's remote apps WebS
 - [ts5-remote-apps-wrapper](#ts5-remote-apps-wrapper)
 - [Table of contents](#table-of-contents)
 - [Setting up ts5-remote-apps-wrapper](#setting-up-ts5-remote-apps-wrapper)
-- [API connection basics](#api-connection-basics)
+- [Usage](#usage)
+  - [Basic information](#basic-information)
   - [Connecting without API key](#connecting-without-api-key)
   - [Connecting with existing API key](#connecting-with-existing-api-key)
   - [Basic connection example](#basic-connection-example)
@@ -22,6 +23,7 @@ A front end API wrapper written in JavaScript for TeamSpeak 5's remote apps WebS
   - [TeamSpeak](#teamspeak)
     - [Show captured events](#show-captured-events)
     - [List of commonly used events](#list-of-commonly-used-events)
+- [Methods](#methods)
 - [TeamSpeak client](#teamspeak-client)
   - [Permission prompt](#permission-prompt)
 
@@ -36,7 +38,9 @@ A front end API wrapper written in JavaScript for TeamSpeak 5's remote apps WebS
 new TSRemoteAppWrapper.TSApiWrapper();
 ```
 
-# API connection basics
+# Usage
+
+## Basic information
 When connecting to the TeamSpeak client API, an API key is used to identify the application that is trying to access the API. The API key is generated upon the first connection (given an empty API key is passed in the config on the first connection) after the user has accepted the [permission prompt](#permission-prompt) in the TeamSpeak client settings.
 
 It is best to store the API key for future connections as this prevents the user from having to accept the [permission prompt](#permission-prompt) again in the future.
@@ -163,6 +167,15 @@ Once the API is connected successfully, every event that is triggered in the Tea
 | `tsOnTextMessage`             | Called when a chat message is received                                                    |
 | `tsOnTalkStatusChanged`       | Called after the talk status changed                                                      |
 
+# Methods
+| Event                      | Description                                                                              | Parameters                                                                                                  | Return type | Possible exceptions                              |
+| -------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------ |
+| `connect()`                | Used to connect to API after disconnecting or connection was closed                      |                                                                                                             | `void`      |                                                  |
+| `disconnect()`             | Disconnect from the API. (Should only be called after [apiReady event](#list-of-events)) |                                                                                                             | `void`      | `TSApiConnectionException`                       |
+| `send(data)`               | Send JSON data to the API                                                                | `data` => JSON object to send to the API                                                                    | `void`      | `TSApiConnectionException`, `TSApiAuthException` |
+| `on(eventName, callback)`  | Bind a custom callback function to [events](#events).                                    | `eventName` => Name of event to bind callback to<br/>`callback` => Function to execute when event is called | `void`      |                                                  |
+| `off(eventName, callback)` | Remove a custom callback function that is bound to an [event](#events).                  | `eventName` => Name of event to remove callback from<br/>`callback` => Function to remove from event        | `void`      |                                                  |
+
 
 # TeamSpeak client
 ## Permission prompt
@@ -173,5 +186,5 @@ The prompt can be found either in TeamSpeak's notification tray:<br/>
 <br/>
 or under the "Remote Apps" settings:<br/>
 <br/>
-<img src='doc/permission-prompt-settings.png' alt="Permission prompt in TeamSpeak settings" height='400'><br/>
+<img src='doc/permission-prompt-settings.png' alt="Permission prompt in TeamSpeak settings"><br/>
 <br/>
