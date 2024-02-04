@@ -124,7 +124,7 @@ Examples are: Failure to connect to API, closing of API connection etc.
 ### List of events
 | Event                | Description                                                                                      | Callback parameter value                                                                         |
 | -------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| `apiConnectionClose` | Called when the API connection is closed                                                         | Original WebSocket event                                                                         |
+| `apiConnectionClosed` | Called when the API connection is closed                                                         | Original WebSocket event                                                                         |
 | `apiConnectionOpen`  | Called when the API connection is opened (before authentication)                                 | Original WebSocket event                                                                         |
 | `apiError`           | Called when the API connection fails or closes unexpectedly                                      | `socketEvent` => Original WebSocket event <br/>`exception` => Exception that describes the error |
 | `apiIncomingMessage` | Called when the API wrapper is receiving a message from the TeamSpeak client                     | Original WebSocket event                                                                         |
